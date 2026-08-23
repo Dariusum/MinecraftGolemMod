@@ -1,0 +1,32 @@
+modLoader="javafml"
+loaderVersion="${loader_version_range}"
+license="${mod_license}"
+
+[[mods]]
+modId="${mod_id}"
+version="${mod_version}"
+displayName="${mod_name}"
+authors="${mod_authors}"
+description='''More Golems fügt neue, per Block-Kombination erschaffbare Golems hinzu.
+
+WOLLGOLEM
+Erschaffung: einen weißen Wollblock platzieren, dann einen geschnitzten Kürbis darauf setzen — analog zum Kupfer-Golem. Der Wollblock wird dabei zu einer normalen Truhe, auf der der Golem erscheint (sieht aus wie ein weißer Kupfer-Golem).
+Verhalten: schert selbstständig alle scherbereiten Schafe im Umkreis von 10 Blöcken um seine Truhe, sammelt die Wolle (und lose herumliegende Wolle, falls gerade kein Schaf scherbereit ist) ein und legt sie in die Truhe. Komplett friedlich.
+
+FELD-GOLEMS (Karotte, Kartoffel, Rote Bete, Weizen)
+Erschaffung: eine Truhe platzieren, die ausschließlich genau ein Stück Pflanzgut enthält, dann einen geschnitzten Kürbis darauf setzen. Die Truhe bleibt erhalten. Pflanzgut: Karotte / Kartoffel / Rote-Bete-Samen / Weizensamen (bei Rote Bete und Weizen ist der Samen zu verwenden, nicht der Ertrag). Sieht jeweils wie ein passend eingefärbter Kupfer-Golem aus (orange / hellbraun / dunkelrot / goldgelb).
+Verhalten: bewirtschaftet die 9x9-Feldfläche (max. 4 Blöcke Abstand, wie eine Wasser-Bewässerung) um seine Truhe (nur bereits vorhandenes Ackerland, pflügt nicht selbst um) — erntet reife Felder und bepflanzt sofort neu, bepflanzt leere Felder, holt bei Bedarf Pflanzgut-Nachschub aus der Truhe und legt Ernte-Ertrag sowie überzähliges Pflanzgut zurück, sobald nichts mehr zu tun ist. Komplett friedlich.'''
+
+[[dependencies.${mod_id}]]
+modId="neoforge"
+type="required"
+versionRange="${neo_version_range}"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.${mod_id}]]
+modId="minecraft"
+type="required"
+versionRange="${minecraft_version_range}"
+ordering="NONE"
+side="BOTH"

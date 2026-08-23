@@ -1,0 +1,22 @@
+# Gradle
+.gradle/
+build/
+src/generated/
+
+# Run/test data (dev server world, logs, etc.)
+run/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.eclipse/
+bin/
+out/
+
+# OS
+.DS_Store
+
+# Local signing / secrets (none expected, but never commit these)
+*.jks
+*.keystore
