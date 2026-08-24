@@ -7,15 +7,39 @@ modId="${mod_id}"
 version="${mod_version}"
 displayName="${mod_name}"
 authors="${mod_authors}"
-description='''More Golems fügt neue, per Block-Kombination erschaffbare Golems hinzu.
+description='''More Golems fügt neue Golems hinzu — jeweils analog zum Kupfer-Golem: ein geschnitzter Kürbis auf dem passenden Block lässt den Golem entstehen. Alle Golems sind komplett friedlich und verlassen ihren Arbeitsbereich nicht.
 
 WOLLGOLEM
-Erschaffung: einen weißen Wollblock platzieren, dann einen geschnitzten Kürbis darauf setzen — analog zum Kupfer-Golem. Der Wollblock wird dabei zu einer normalen Truhe, auf der der Golem erscheint (sieht aus wie ein weißer Kupfer-Golem).
-Verhalten: schert selbstständig alle scherbereiten Schafe im Umkreis von 10 Blöcken um seine Truhe, sammelt die Wolle (und lose herumliegende Wolle, falls gerade kein Schaf scherbereit ist) ein und legt sie in die Truhe. Komplett friedlich.
+Rezept: weißer Wollblock, darauf ein geschnitzter Kürbis. Der Wollblock wird dabei zu einer normalen Truhe, auf der der Golem erscheint.
+Aussehen: weißer Kupfer-Golem.
+Arbeitsweise: schert selbstständig alle scherbereiten Schafe im Umkreis von 10 Blöcken um seine Truhe, sammelt die Wolle (auch lose herumliegende, falls gerade kein Schaf scherbereit ist) ein und legt sie in die Truhe.
 
-FELD-GOLEMS (Karotte, Kartoffel, Rote Bete, Weizen)
-Erschaffung: eine Truhe platzieren, die ausschließlich genau ein Stück Pflanzgut enthält, dann einen geschnitzten Kürbis darauf setzen. Die Truhe bleibt erhalten. Pflanzgut: Karotte / Kartoffel / Rote-Bete-Samen / Weizensamen (bei Rote Bete und Weizen ist der Samen zu verwenden, nicht der Ertrag). Sieht jeweils wie ein passend eingefärbter Kupfer-Golem aus (orange / hellbraun / dunkelrot / goldgelb).
-Verhalten: bewirtschaftet die 9x9-Feldfläche (max. 4 Blöcke Abstand, wie eine Wasser-Bewässerung) um seine Truhe (nur bereits vorhandenes Ackerland, pflügt nicht selbst um) — erntet reife Felder und bepflanzt sofort neu, bepflanzt leere Felder, holt bei Bedarf Pflanzgut-Nachschub aus der Truhe und legt Ernte-Ertrag sowie überzähliges Pflanzgut zurück, sobald nichts mehr zu tun ist. Komplett friedlich.'''
+KAROTTENGOLEM
+Rezept: Truhe, die ausschließlich genau 1 Karotte enthält, darauf ein geschnitzter Kürbis. Die Truhe bleibt erhalten.
+Aussehen: oranger Kupfer-Golem.
+Arbeitsweise: siehe "FELD-GOLEMS" unten.
+
+KARTOFFELGOLEM
+Rezept: Truhe, die ausschließlich genau 1 Kartoffel enthält, darauf ein geschnitzter Kürbis.
+Aussehen: hellbrauner Kupfer-Golem.
+Arbeitsweise: siehe "FELD-GOLEMS" unten.
+
+ROTE-BETE-GOLEM
+Rezept: Truhe, die ausschließlich genau 1 Rote-Bete-Samen enthält (nicht die Rote Bete selbst!), darauf ein geschnitzter Kürbis.
+Aussehen: dunkelroter Kupfer-Golem.
+Arbeitsweise: siehe "FELD-GOLEMS" unten.
+
+WEIZENGOLEM
+Rezept: Truhe, die ausschließlich genau 1 Weizensamen enthält (nicht Weizen selbst!), darauf ein geschnitzter Kürbis.
+Aussehen: goldgelber Kupfer-Golem.
+Arbeitsweise: siehe "FELD-GOLEMS" unten.
+
+FELD-GOLEMS — gemeinsame Arbeitsweise (Karotte/Kartoffel/Rote Bete/Weizen)
+Bewirtschaften die 9x9-Feldfläche um ihre Truhe (max. 4 Blöcke Abstand — derselbe Bereich, den auch ein Wasserblock bewässern würde). Bepflanzen nur bereits vorhandenes Ackerland, pflügen selbst nichts um.
+- Erntet ein reifes Feld und bepflanzt die Stelle sofort mit einer der geernteten Samen neu.
+- Bepflanzt leere Ackerfelder mit getragenem Pflanzgut.
+- Holt bei Bedarf Pflanzgut-Nachschub aus der Truhe, solange noch unbepflanzte Felder übrig sind.
+- Legt Ernte-Ertrag (bei Rote Bete/Weizen: das Gemüse bzw. der Weizen selbst) sowie überzähliges Pflanzgut in der Truhe ab, sobald nichts mehr zu tun ist.'''
 
 [[dependencies.${mod_id}]]
 modId="neoforge"
