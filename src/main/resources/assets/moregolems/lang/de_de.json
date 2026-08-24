@@ -3,5 +3,6 @@
   "entity.moregolems.carrot_golem": "Karottengolem",
   "entity.moregolems.potato_golem": "Kartoffelgolem",
   "entity.moregolems.beetroot_golem": "Rote-Bete-Golem",
-  "entity.moregolems.wheat_golem": "Weizengolem"
+  "entity.moregolems.wheat_golem": "Weizengolem",
+  "entity.moregolems.bamboo_golem": "Bambusgolem"
 }

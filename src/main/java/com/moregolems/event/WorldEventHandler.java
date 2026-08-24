@@ -1,6 +1,7 @@
 package com.moregolems.event;
 
 import com.moregolems.MoreGolemsMod;
+import com.moregolems.entity.BambooGolem;
 import com.moregolems.entity.BeetrootGolem;
 import com.moregolems.entity.CarrotGolem;
 import com.moregolems.entity.CropGolem;
@@ -42,6 +43,8 @@ public final class WorldEventHandler {
      *   unverändert, nur der Golem wird daran gebunden. Bei Weizen und Roter Bete ist das
      *   Pflanzgut nicht der Ertrag selbst, sondern der jeweilige Samen (Weizensamen /
      *   Rote-Bete-Samen), siehe {@link CropGolem#seedItem()}.
+     * - Bambusgolem: wie die Feld-Golems (Truhe mit genau einem Stück Bambus), aber kein
+     *   {@link CropGolem} — siehe {@link #trySpawnBambooGolem}.
      *
      * Reagiert auf {@code NeighborNotifyEvent} statt (wie zunächst versucht)
      * {@code BlockEvent.EntityPlaceEvent} — Letzteres feuert nur bei Spieler-/Mob-Platzierung,
@@ -67,7 +70,8 @@ public final class WorldEventHandler {
             boolean spawned = trySpawnCropGolem(server, pumpkinPos, basePos, Items.CARROT, ModEntities.CARROT_GOLEM.get(), CarrotGolem::new)
                     || trySpawnCropGolem(server, pumpkinPos, basePos, Items.POTATO, ModEntities.POTATO_GOLEM.get(), PotatoGolem::new)
                     || trySpawnCropGolem(server, pumpkinPos, basePos, Items.BEETROOT_SEEDS, ModEntities.BEETROOT_GOLEM.get(), BeetrootGolem::new)
-                    || trySpawnCropGolem(server, pumpkinPos, basePos, Items.WHEAT_SEEDS, ModEntities.WHEAT_GOLEM.get(), WheatGolem::new);
+                    || trySpawnCropGolem(server, pumpkinPos, basePos, Items.WHEAT_SEEDS, ModEntities.WHEAT_GOLEM.get(), WheatGolem::new)
+                    || trySpawnBambooGolem(server, pumpkinPos, basePos);
             if (spawned) return; // nur zur Klarheit, dass die Kurzschlussauswertung absichtlich ist
         }
     }
@@ -100,6 +104,28 @@ public final class WorldEventHandler {
         server.addFreshEntity(golem);
 
         MoreGolemsMod.LOG.info("{} erschaffen bei {} (Truhe bei {})", entityType, pumpkinPos, chestPos);
+        return true;
+    }
+
+    /**
+     * Bambusgolem: eigener Spawn-Pfad statt über {@link #trySpawnCropGolem}, da {@link BambooGolem}
+     * kein {@link CropGolem} ist (Ernte-/Pflanz-Mechanik unterscheidet sich zu stark — kein
+     * Ackerland, kein Nachbepflanz-Zyklus, sondern ein 10x10-Erdblock-Feld mit Bambus-Stapeln).
+     *
+     * @return true, falls die Truhe genau ein Stück Bambus enthielt und der Golem erschaffen wurde.
+     */
+    private static boolean trySpawnBambooGolem(ServerLevel server, BlockPos pumpkinPos, BlockPos chestPos) {
+        if (!(server.getBlockEntity(chestPos) instanceof Container container)) return false;
+        if (!ContainerUtil.containsOnly(container, Items.BAMBOO, 1)) return false;
+
+        server.setBlockAndUpdate(pumpkinPos, Blocks.AIR.defaultBlockState());
+
+        BambooGolem golem = new BambooGolem(ModEntities.BAMBOO_GOLEM.get(), server);
+        golem.setPos(pumpkinPos.getX() + 0.5, pumpkinPos.getY(), pumpkinPos.getZ() + 0.5);
+        golem.setHomeChestPos(chestPos);
+        server.addFreshEntity(golem);
+
+        MoreGolemsMod.LOG.info("Bambusgolem erschaffen bei {} (Truhe bei {})", pumpkinPos, chestPos);
         return true;
     }
 }

@@ -1,6 +1,7 @@
 package com.moregolems.registry;
 
 import com.moregolems.MoreGolemsMod;
+import com.moregolems.entity.BambooGolem;
 import com.moregolems.entity.BeetrootGolem;
 import com.moregolems.entity.CarrotGolem;
 import com.moregolems.entity.PotatoGolem;
@@ -70,6 +71,16 @@ public final class ModEntities {
                     .eyeHeight(1.0F)
                     .clientTrackingRange(10)
                     .build(WHEAT_GOLEM_KEY));
+
+    public static final ResourceKey<EntityType<?>> BAMBOO_GOLEM_KEY =
+            ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(MODID, "bamboo_golem"));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<BambooGolem>> BAMBOO_GOLEM =
+            ENTITY_TYPES.register("bamboo_golem", () -> EntityType.Builder.of(BambooGolem::new, MobCategory.MISC)
+                    .sized(0.9F, 1.2F)
+                    .eyeHeight(1.0F)
+                    .clientTrackingRange(10)
+                    .build(BAMBOO_GOLEM_KEY));
 
     private ModEntities() {}
 

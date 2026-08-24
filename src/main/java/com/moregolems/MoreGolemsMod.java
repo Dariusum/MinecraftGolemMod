@@ -1,5 +1,6 @@
 package com.moregolems;
 
+import com.moregolems.entity.BambooGolem;
 import com.moregolems.entity.CropGolem;
 import com.moregolems.entity.WoolGolem;
 import com.moregolems.registry.ModEntities;
@@ -26,6 +27,7 @@ public class MoreGolemsMod {
             event.put(ModEntities.POTATO_GOLEM.get(), CropGolem.createAttributes().build());
             event.put(ModEntities.BEETROOT_GOLEM.get(), CropGolem.createAttributes().build());
             event.put(ModEntities.WHEAT_GOLEM.get(), CropGolem.createAttributes().build());
+            event.put(ModEntities.BAMBOO_GOLEM.get(), BambooGolem.createAttributes().build());
         });
 
         if (FMLEnvironment.getDist() == Dist.CLIENT) {

@@ -39,7 +39,16 @@ Bewirtschaften die 9x9-Feldfläche um ihre Truhe (max. 4 Blöcke Abstand — der
 - Erntet ein reifes Feld und bepflanzt die Stelle sofort mit einer der geernteten Samen neu.
 - Bepflanzt leere Ackerfelder mit getragenem Pflanzgut.
 - Holt bei Bedarf Pflanzgut-Nachschub aus der Truhe, solange noch unbepflanzte Felder übrig sind.
-- Legt Ernte-Ertrag (bei Rote Bete/Weizen: das Gemüse bzw. der Weizen selbst) sowie überzähliges Pflanzgut in der Truhe ab, sobald nichts mehr zu tun ist.'''
+- Legt Ernte-Ertrag (bei Rote Bete/Weizen: das Gemüse bzw. der Weizen selbst) sowie überzähliges Pflanzgut in der Truhe ab, sobald nichts mehr zu tun ist.
+
+BAMBUSGOLEM
+Rezept: Truhe, die ausschließlich genau 1 Stück Bambus enthält, darauf ein geschnitzter Kürbis.
+Aussehen: grüner Kupfer-Golem.
+Arbeitsweise: bewirtschaftet ein 10x10-Feld aus Erdblöcken auf Höhe der Truhe.
+- Erntet hochgewachsene Bambus-Stapel, lässt dabei das unterste Segment stehen (wächst von dort weiter nach).
+- Sammelt die dabei abgeworfenen sowie sonstige lose herumliegende Bambus-Stücke ein.
+- Bepflanzt leere Erdblöcke im Feld mit getragenem Bambus, holt bei Bedarf Nachschub aus der Truhe.
+- Legt überzähligen Bambus in der Truhe ab, sobald kein Erdblock im Feld mehr unbepflanzt ist.'''
 
 [[dependencies.${mod_id}]]
 modId="neoforge"
