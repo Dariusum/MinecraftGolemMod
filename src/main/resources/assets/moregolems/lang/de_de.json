@@ -4,5 +4,7 @@
   "entity.moregolems.potato_golem": "Kartoffelgolem",
   "entity.moregolems.beetroot_golem": "Rote-Bete-Golem",
   "entity.moregolems.wheat_golem": "Weizengolem",
-  "entity.moregolems.bamboo_golem": "Bambusgolem"
+  "entity.moregolems.bamboo_golem": "Bambusgolem",
+  "entity.moregolems.sugar_cane_golem": "Zuckerrohrgolem",
+  "entity.moregolems.pumpkin_golem": "Kürbisgolem"
 }

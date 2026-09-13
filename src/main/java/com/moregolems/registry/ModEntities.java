@@ -5,6 +5,8 @@ import com.moregolems.entity.BambooGolem;
 import com.moregolems.entity.BeetrootGolem;
 import com.moregolems.entity.CarrotGolem;
 import com.moregolems.entity.PotatoGolem;
+import com.moregolems.entity.PumpkinGolem;
+import com.moregolems.entity.SugarCaneGolem;
 import com.moregolems.entity.WheatGolem;
 import com.moregolems.entity.WoolGolem;
 import net.minecraft.core.registries.Registries;
@@ -81,6 +83,26 @@ public final class ModEntities {
                     .eyeHeight(1.0F)
                     .clientTrackingRange(10)
                     .build(BAMBOO_GOLEM_KEY));
+
+    public static final ResourceKey<EntityType<?>> SUGAR_CANE_GOLEM_KEY =
+            ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(MODID, "sugar_cane_golem"));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<SugarCaneGolem>> SUGAR_CANE_GOLEM =
+            ENTITY_TYPES.register("sugar_cane_golem", () -> EntityType.Builder.of(SugarCaneGolem::new, MobCategory.MISC)
+                    .sized(0.9F, 1.2F)
+                    .eyeHeight(1.0F)
+                    .clientTrackingRange(10)
+                    .build(SUGAR_CANE_GOLEM_KEY));
+
+    public static final ResourceKey<EntityType<?>> PUMPKIN_GOLEM_KEY =
+            ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(MODID, "pumpkin_golem"));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<PumpkinGolem>> PUMPKIN_GOLEM =
+            ENTITY_TYPES.register("pumpkin_golem", () -> EntityType.Builder.of(PumpkinGolem::new, MobCategory.MISC)
+                    .sized(0.9F, 1.2F)
+                    .eyeHeight(1.0F)
+                    .clientTrackingRange(10)
+                    .build(PUMPKIN_GOLEM_KEY));
 
     private ModEntities() {}
 

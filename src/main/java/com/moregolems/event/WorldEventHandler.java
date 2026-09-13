@@ -6,6 +6,8 @@ import com.moregolems.entity.BeetrootGolem;
 import com.moregolems.entity.CarrotGolem;
 import com.moregolems.entity.CropGolem;
 import com.moregolems.entity.PotatoGolem;
+import com.moregolems.entity.PumpkinGolem;
+import com.moregolems.entity.SugarCaneGolem;
 import com.moregolems.entity.WheatGolem;
 import com.moregolems.entity.WoolGolem;
 import com.moregolems.registry.ModEntities;
@@ -45,6 +47,10 @@ public final class WorldEventHandler {
      *   Rote-Bete-Samen), siehe {@link CropGolem#seedItem()}.
      * - Bambusgolem: wie die Feld-Golems (Truhe mit genau einem Stück Bambus), aber kein
      *   {@link CropGolem} — siehe {@link #trySpawnBambooGolem}.
+     * - Zuckerrohrgolem: wie der Bambusgolem, Truhe mit genau einem Stück Zuckerrohr — siehe
+     *   {@link #trySpawnSugarCaneGolem}.
+     * - Kürbisgolem: Truhe mit genau einem Stück Kürbiskerne (analog zu Weizen-/Rote-Bete-Golem:
+     *   Auslöse-Item ist der Samen, nicht der Ertrag) — siehe {@link #trySpawnPumpkinGolem}.
      *
      * Reagiert auf {@code NeighborNotifyEvent} statt (wie zunächst versucht)
      * {@code BlockEvent.EntityPlaceEvent} — Letzteres feuert nur bei Spieler-/Mob-Platzierung,
@@ -71,7 +77,9 @@ public final class WorldEventHandler {
                     || trySpawnCropGolem(server, pumpkinPos, basePos, Items.POTATO, ModEntities.POTATO_GOLEM.get(), PotatoGolem::new)
                     || trySpawnCropGolem(server, pumpkinPos, basePos, Items.BEETROOT_SEEDS, ModEntities.BEETROOT_GOLEM.get(), BeetrootGolem::new)
                     || trySpawnCropGolem(server, pumpkinPos, basePos, Items.WHEAT_SEEDS, ModEntities.WHEAT_GOLEM.get(), WheatGolem::new)
-                    || trySpawnBambooGolem(server, pumpkinPos, basePos);
+                    || trySpawnBambooGolem(server, pumpkinPos, basePos)
+                    || trySpawnSugarCaneGolem(server, pumpkinPos, basePos)
+                    || trySpawnPumpkinGolem(server, pumpkinPos, basePos);
             if (spawned) return; // nur zur Klarheit, dass die Kurzschlussauswertung absichtlich ist
         }
     }
@@ -126,6 +134,50 @@ public final class WorldEventHandler {
         server.addFreshEntity(golem);
 
         MoreGolemsMod.LOG.info("Bambusgolem erschaffen bei {} (Truhe bei {})", pumpkinPos, chestPos);
+        return true;
+    }
+
+    /**
+     * Zuckerrohrgolem: eigener Spawn-Pfad wie {@link #trySpawnBambooGolem} (kein {@link CropGolem},
+     * kein Nachbepflanz-Zyklus, sondern ein kreisförmiger 20-Block-Suchbereich).
+     *
+     * @return true, falls die Truhe genau ein Stück Zuckerrohr enthielt und der Golem erschaffen wurde.
+     */
+    private static boolean trySpawnSugarCaneGolem(ServerLevel server, BlockPos pumpkinPos, BlockPos chestPos) {
+        if (!(server.getBlockEntity(chestPos) instanceof Container container)) return false;
+        if (!ContainerUtil.containsOnly(container, Items.SUGAR_CANE, 1)) return false;
+
+        server.setBlockAndUpdate(pumpkinPos, Blocks.AIR.defaultBlockState());
+
+        SugarCaneGolem golem = new SugarCaneGolem(ModEntities.SUGAR_CANE_GOLEM.get(), server);
+        golem.setPos(pumpkinPos.getX() + 0.5, pumpkinPos.getY(), pumpkinPos.getZ() + 0.5);
+        golem.setHomeChestPos(chestPos);
+        server.addFreshEntity(golem);
+
+        MoreGolemsMod.LOG.info("Zuckerrohrgolem erschaffen bei {} (Truhe bei {})", pumpkinPos, chestPos);
+        return true;
+    }
+
+    /**
+     * Kürbisgolem: eigener Spawn-Pfad wie {@link #trySpawnBambooGolem} (kein {@link CropGolem},
+     * kein Nachbepflanz-Zyklus, sondern ein kreisförmiger 100-Block-Suchbereich). Auslöse-Item ist
+     * Kürbiskerne, nicht Kürbis selbst — analog zu Weizen-/Rote-Bete-Golem, deren Auslöse-Item
+     * ebenfalls der Samen statt des Ertrags ist.
+     *
+     * @return true, falls die Truhe genau ein Stück Kürbiskerne enthielt und der Golem erschaffen wurde.
+     */
+    private static boolean trySpawnPumpkinGolem(ServerLevel server, BlockPos pumpkinPos, BlockPos chestPos) {
+        if (!(server.getBlockEntity(chestPos) instanceof Container container)) return false;
+        if (!ContainerUtil.containsOnly(container, Items.PUMPKIN_SEEDS, 1)) return false;
+
+        server.setBlockAndUpdate(pumpkinPos, Blocks.AIR.defaultBlockState());
+
+        PumpkinGolem golem = new PumpkinGolem(ModEntities.PUMPKIN_GOLEM.get(), server);
+        golem.setPos(pumpkinPos.getX() + 0.5, pumpkinPos.getY(), pumpkinPos.getZ() + 0.5);
+        golem.setHomeChestPos(chestPos);
+        server.addFreshEntity(golem);
+
+        MoreGolemsMod.LOG.info("Kürbisgolem erschaffen bei {} (Truhe bei {})", pumpkinPos, chestPos);
         return true;
     }
 }

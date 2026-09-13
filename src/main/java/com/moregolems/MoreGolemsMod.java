@@ -2,6 +2,8 @@ package com.moregolems;
 
 import com.moregolems.entity.BambooGolem;
 import com.moregolems.entity.CropGolem;
+import com.moregolems.entity.PumpkinGolem;
+import com.moregolems.entity.SugarCaneGolem;
 import com.moregolems.entity.WoolGolem;
 import com.moregolems.registry.ModEntities;
 import net.neoforged.api.distmarker.Dist;
@@ -28,6 +30,8 @@ public class MoreGolemsMod {
             event.put(ModEntities.BEETROOT_GOLEM.get(), CropGolem.createAttributes().build());
             event.put(ModEntities.WHEAT_GOLEM.get(), CropGolem.createAttributes().build());
             event.put(ModEntities.BAMBOO_GOLEM.get(), BambooGolem.createAttributes().build());
+            event.put(ModEntities.SUGAR_CANE_GOLEM.get(), SugarCaneGolem.createAttributes().build());
+            event.put(ModEntities.PUMPKIN_GOLEM.get(), PumpkinGolem.createAttributes().build());
         });
 
         if (FMLEnvironment.getDist() == Dist.CLIENT) {
