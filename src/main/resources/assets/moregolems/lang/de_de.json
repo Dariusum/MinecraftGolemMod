@@ -6,5 +6,6 @@
   "entity.moregolems.wheat_golem": "Weizengolem",
   "entity.moregolems.bamboo_golem": "Bambusgolem",
   "entity.moregolems.sugar_cane_golem": "Zuckerrohrgolem",
-  "entity.moregolems.pumpkin_golem": "Kürbisgolem"
+  "entity.moregolems.pumpkin_golem": "Kürbisgolem",
+  "entity.moregolems.earth_golem": "Erdgolem"
 }

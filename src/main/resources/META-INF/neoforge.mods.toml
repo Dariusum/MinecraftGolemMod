@@ -48,7 +48,18 @@ Arbeitsweise: bewirtschaftet ein 10x10-Feld aus Erdblöcken auf Höhe der Truhe.
 - Erntet hochgewachsene Bambus-Stapel, lässt dabei das unterste Segment stehen (wächst von dort weiter nach).
 - Sammelt die dabei abgeworfenen sowie sonstige lose herumliegende Bambus-Stücke ein.
 - Bepflanzt leere Erdblöcke im Feld mit getragenem Bambus, holt bei Bedarf Nachschub aus der Truhe.
-- Legt überzähligen Bambus in der Truhe ab, sobald kein Erdblock im Feld mehr unbepflanzt ist.'''
+- Legt überzähligen Bambus in der Truhe ab, sobald kein Erdblock im Feld mehr unbepflanzt ist.
+
+ERDGOLEM
+Rezept: anders als alle übrigen Golems keine Kiste mit Auslöse-Item, sondern eine ganze Struktur wie beim echten Eisengolem - drei Erdblöcke im selben T-Muster wie die drei Eisenblöcke eines Eisengolems, eine Truhe statt eines vierten Erdblocks an der Beine-Position, darauf ein geschnitzter Kürbis. Funktioniert wie beim echten Eisengolem in jeder Ausrichtung. Die Erdblöcke und der Kürbis verschwinden beim Erschaffen, die Truhe bleibt - der Golem steht auf ihr.
+Aussehen: wie ein Eisengolem, nur mit Erde texturiert. Trägt einen abgebauten Block sichtbar vor sich her (wie ein Enderman).
+Arbeitsweise: baut Erd- und Grasblöcke oberhalb seiner Truhen-Ebene in seinem Arbeitsbereich ab und legt sie in der Truhe ab - anders als alle übrigen Golems keine nachwachsende Ressource, sondern dauerhaftes Terraforming.
+- Baut nur Blöcke ab, die auf oder über Truhen-Höhe liegen.
+- Baut nur Blöcke ab, die direkt exponiert sind (nichts liegt direkt darüber).
+- Baut nur Blöcke ab, bei denen dadurch keine Stufe von mehr als 1 Block zu einem Nachbarblock entsteht.
+- Wählt immer den nächstgelegenen gültigen Block, bei Gleichstand den nördlichsten, danach den östlichsten.
+- Trägt jeweils nur einen Block gleichzeitig, legt ihn in der Truhe ab und holt sich den nächsten.
+- Bleibt bei voller Truhe oder ohne aktuelles Ziel bei seiner Truhe stehen, statt umherzuwandern.'''
 
 [[dependencies.${mod_id}]]
 modId="neoforge"

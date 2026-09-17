@@ -66,6 +66,15 @@ public final class ContainerUtil {
         return total;
     }
 
+    /** true, wenn kein Slot leer ist und kein Slot noch Stapelraum hat (unabhängig vom Item). */
+    public static boolean isFull(Container container) {
+        for (int i = 0; i < container.getContainerSize(); i++) {
+            ItemStack stack = container.getItem(i);
+            if (stack.isEmpty() || stack.getCount() < stack.getMaxStackSize()) return false;
+        }
+        return true;
+    }
+
     /** true, wenn [container] ausschließlich [expectedCount] Stück von [item] enthält und sonst nichts. */
     public static boolean containsOnly(Container container, Item item, int expectedCount) {
         int total = 0;

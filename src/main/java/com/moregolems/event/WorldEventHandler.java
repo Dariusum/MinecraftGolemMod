@@ -5,6 +5,7 @@ import com.moregolems.entity.BambooGolem;
 import com.moregolems.entity.BeetrootGolem;
 import com.moregolems.entity.CarrotGolem;
 import com.moregolems.entity.CropGolem;
+import com.moregolems.entity.EarthGolem;
 import com.moregolems.entity.PotatoGolem;
 import com.moregolems.entity.PumpkinGolem;
 import com.moregolems.entity.SugarCaneGolem;
@@ -19,8 +20,14 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.golem.AbstractGolem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.pattern.BlockInWorld;
+import net.minecraft.world.level.block.state.pattern.BlockPattern;
+import net.minecraft.world.level.block.state.pattern.BlockPatternBuilder;
+import net.minecraft.world.level.block.state.predicate.BlockStatePredicate;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.level.BlockEvent;
@@ -31,6 +38,23 @@ import java.util.function.BiFunction;
 public final class WorldEventHandler {
 
     private WorldEventHandler() {}
+
+    /**
+     * Erdgolem-Struktur: dasselbe T-Muster wie ein echter Eisengolem (siehe
+     * {@code CarvedPumpkinBlock.getOrCreateIronGolemFull} in Vanilla), aber mit Erdblöcken statt
+     * Eisenblöcken und einer Truhe statt eines vierten Erdblocks an der Beine-Position. Genau wie
+     * beim echten Eisengolem prüft {@link BlockPattern#find} automatisch alle 4 Himmelsrichtungen,
+     * die Struktur kann also in beliebiger Ausrichtung gebaut werden.
+     */
+    private static final BlockPattern EARTH_GOLEM_PATTERN = BlockPatternBuilder.start()
+            .aisle("~^~",
+                   "###",
+                   "~C~")
+            .where('^', BlockInWorld.hasState(state -> state.is(Blocks.CARVED_PUMPKIN) || state.is(Blocks.JACK_O_LANTERN)))
+            .where('#', BlockInWorld.hasState(BlockStatePredicate.forBlock(Blocks.DIRT)))
+            .where('C', BlockInWorld.hasState(state -> state.is(Blocks.CHEST)))
+            .where('~', BlockInWorld.hasState(BlockBehaviour.BlockStateBase::isAir))
+            .build();
 
     /**
      * Erschafft Golems analog zum Kupfer-Golem: ein geschnitzter Kürbis auf dem passenden Block
@@ -51,6 +75,10 @@ public final class WorldEventHandler {
      *   {@link #trySpawnSugarCaneGolem}.
      * - Kürbisgolem: Truhe mit genau einem Stück Kürbiskerne (analog zu Weizen-/Rote-Bete-Golem:
      *   Auslöse-Item ist der Samen, nicht der Ertrag) — siehe {@link #trySpawnPumpkinGolem}.
+     * - Erdgolem: anders als alle übrigen Golems kein Kürbis-auf-Einzelblock-Rezept, sondern eine
+     *   ganze Struktur wie beim echten Eisengolem (drei Erdblöcke im Eisengolem-T-Muster, Truhe
+     *   statt vierten Erdblocks an der Beine-Position, Kürbis obendrauf) — siehe
+     *   {@link #EARTH_GOLEM_PATTERN}, {@link #trySpawnEarthGolem}.
      *
      * Reagiert auf {@code NeighborNotifyEvent} statt (wie zunächst versucht)
      * {@code BlockEvent.EntityPlaceEvent} — Letzteres feuert nur bei Spieler-/Mob-Platzierung,
@@ -72,6 +100,8 @@ public final class WorldEventHandler {
 
         if (baseState.is(Blocks.WOOL.white())) {
             spawnWoolGolem(server, pumpkinPos, basePos);
+        } else if (baseState.is(Blocks.DIRT)) {
+            trySpawnEarthGolem(server, pumpkinPos);
         } else if (baseState.is(Blocks.CHEST)) {
             boolean spawned = trySpawnCropGolem(server, pumpkinPos, basePos, Items.CARROT, ModEntities.CARROT_GOLEM.get(), CarrotGolem::new)
                     || trySpawnCropGolem(server, pumpkinPos, basePos, Items.POTATO, ModEntities.POTATO_GOLEM.get(), PotatoGolem::new)
@@ -94,6 +124,41 @@ public final class WorldEventHandler {
         server.addFreshEntity(golem);
 
         MoreGolemsMod.LOG.info("Wollgolem erschaffen bei {} (Truhe bei {})", pumpkinPos, woolPos);
+    }
+
+    /**
+     * Erdgolem: eigener Spawn-Pfad über {@link #EARTH_GOLEM_PATTERN} statt der einfachen
+     * Ein-Block-Prüfung der übrigen Golems, da die Struktur (wie beim echten Eisengolem) mehrere
+     * Blöcke in beliebiger Ausrichtung umfasst.
+     *
+     * @return true, falls die volle T-Struktur gefunden und der Golem erschaffen wurde.
+     */
+    private static boolean trySpawnEarthGolem(ServerLevel server, BlockPos pumpkinPos) {
+        BlockPattern.BlockPatternMatch match = EARTH_GOLEM_PATTERN.find(server, pumpkinPos);
+        if (match == null) return false;
+
+        BlockPos chestPos = match.getBlock(1, 2, 0).getPos();
+
+        // Alle Musterbloecke ausser der Truhe raeumen (anders als Vanillas
+        // CarvedPumpkinBlock.clearPatternBlocks, das ausnahmslos alles raeumt) - die Truhe bleibt
+        // als Heimat-Container des Golems erhalten, er steht am Ende auf ihr.
+        for (int x = 0; x < match.getWidth(); x++) {
+            for (int y = 0; y < match.getHeight(); y++) {
+                BlockInWorld block = match.getBlock(x, y, 0);
+                if (block.getPos().equals(chestPos)) continue;
+                server.setBlock(block.getPos(), Blocks.AIR.defaultBlockState(), 3);
+                server.levelEvent(2001, block.getPos(), Block.getId(block.getState()));
+            }
+        }
+
+        EarthGolem golem = new EarthGolem(ModEntities.EARTH_GOLEM.get(), server);
+        BlockPos spawnPos = chestPos.above();
+        golem.setPos(spawnPos.getX() + 0.5, spawnPos.getY(), spawnPos.getZ() + 0.5);
+        golem.setHomeChestPos(chestPos);
+        server.addFreshEntity(golem);
+
+        MoreGolemsMod.LOG.info("Erdgolem erschaffen bei {} (Truhe bei {})", spawnPos, chestPos);
+        return true;
     }
 
     /** @return true, falls die Truhe genau [seedItem] enthielt und der Golem erschaffen wurde. */

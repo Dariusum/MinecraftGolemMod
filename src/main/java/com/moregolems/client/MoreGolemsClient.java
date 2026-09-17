@@ -30,6 +30,7 @@ public final class MoreGolemsClient {
                 ctx -> new ColoredCopperGolemRenderer<>(ctx, texture("sugar_cane_golem")));
         event.registerEntityRenderer(ModEntities.PUMPKIN_GOLEM.get(),
                 ctx -> new ColoredCopperGolemRenderer<>(ctx, texture("pumpkin_golem")));
+        event.registerEntityRenderer(ModEntities.EARTH_GOLEM.get(), EarthGolemRenderer::new);
     }
 
     private static Identifier texture(String name) {

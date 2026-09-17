@@ -4,6 +4,7 @@ import com.moregolems.MoreGolemsMod;
 import com.moregolems.entity.BambooGolem;
 import com.moregolems.entity.BeetrootGolem;
 import com.moregolems.entity.CarrotGolem;
+import com.moregolems.entity.EarthGolem;
 import com.moregolems.entity.PotatoGolem;
 import com.moregolems.entity.PumpkinGolem;
 import com.moregolems.entity.SugarCaneGolem;
@@ -103,6 +104,18 @@ public final class ModEntities {
                     .eyeHeight(1.0F)
                     .clientTrackingRange(10)
                     .build(PUMPKIN_GOLEM_KEY));
+
+    public static final ResourceKey<EntityType<?>> EARTH_GOLEM_KEY =
+            ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(MODID, "earth_golem"));
+
+    // Groesse exakt wie Vanillas Eisengolem (EntityType.Builder.of(IronGolem::new, ...).sized(1.4F, 2.7F))
+    // - der Erdgolem soll optisch/maszlich wie ein Eisengolem wirken, nicht wie die kleineren
+    // Kupfer-Golem-foermigen Golems dieses Mods.
+    public static final DeferredHolder<EntityType<?>, EntityType<EarthGolem>> EARTH_GOLEM =
+            ENTITY_TYPES.register("earth_golem", () -> EntityType.Builder.of(EarthGolem::new, MobCategory.MISC)
+                    .sized(1.4F, 2.7F)
+                    .clientTrackingRange(10)
+                    .build(EARTH_GOLEM_KEY));
 
     private ModEntities() {}
 

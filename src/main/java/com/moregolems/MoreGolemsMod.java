@@ -2,6 +2,7 @@ package com.moregolems;
 
 import com.moregolems.entity.BambooGolem;
 import com.moregolems.entity.CropGolem;
+import com.moregolems.entity.EarthGolem;
 import com.moregolems.entity.PumpkinGolem;
 import com.moregolems.entity.SugarCaneGolem;
 import com.moregolems.entity.WoolGolem;
@@ -32,6 +33,7 @@ public class MoreGolemsMod {
             event.put(ModEntities.BAMBOO_GOLEM.get(), BambooGolem.createAttributes().build());
             event.put(ModEntities.SUGAR_CANE_GOLEM.get(), SugarCaneGolem.createAttributes().build());
             event.put(ModEntities.PUMPKIN_GOLEM.get(), PumpkinGolem.createAttributes().build());
+            event.put(ModEntities.EARTH_GOLEM.get(), EarthGolem.createAttributes().build());
         });
 
         if (FMLEnvironment.getDist() == Dist.CLIENT) {
