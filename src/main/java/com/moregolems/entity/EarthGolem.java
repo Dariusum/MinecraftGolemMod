@@ -40,7 +40,7 @@ import java.util.Optional;
  * Bleibt bei voller Truhe oder ohne aktuelles Ziel bei seiner Truhe stehen ({@link StandByChestGoal})
  * statt ziellos umherzuwandern. Komplett friedlich.
  */
-public class EarthGolem extends AbstractGolem {
+public class EarthGolem extends AbstractGolem implements HasHomeChest {
 
     private static final EntityDataAccessor<Optional<BlockState>> DATA_CARRIED_BLOCK =
             SynchedEntityData.defineId(EarthGolem.class, EntityDataSerializers.OPTIONAL_BLOCK_STATE);

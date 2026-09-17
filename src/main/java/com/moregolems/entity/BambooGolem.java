@@ -35,7 +35,7 @@ import java.util.List;
  * ein ({@link CollectLooseBambooGoal}) und legt getragenen Bambus in der Truhe ab, sobald er ihn
  * nicht zum Bepflanzen braucht ({@link DepositBambooGoal}). Komplett friedlich.
  */
-public class BambooGolem extends AbstractGolem {
+public class BambooGolem extends AbstractGolem implements HasHomeChest {
 
     /**
      * 10x10-Feldfläche um die Truhe, auf Höhe des Blocks, auf dem die Truhe steht (dieselbe Höhe

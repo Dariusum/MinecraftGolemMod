@@ -27,7 +27,7 @@ import javax.annotation.Nullable;
  * Wolle ein und legt sie dort ab (siehe {@link ShearNearbySheepGoal}, {@link DepositWoolGoal}).
  * Komplett friedlich, wie der Kupfer-Golem — keine Angriffs-/Wachziele.
  */
-public class WoolGolem extends AbstractGolem {
+public class WoolGolem extends AbstractGolem implements HasHomeChest {
 
     private static final int SHEAR_RADIUS = 10;
 

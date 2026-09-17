@@ -34,7 +34,7 @@ import java.util.List;
  * ({@link CollectLooseSugarCaneGoal}) und legt sie in der Truhe ab ({@link DepositSugarCaneGoal}).
  * Komplett friedlich.
  */
-public class SugarCaneGolem extends AbstractGolem {
+public class SugarCaneGolem extends AbstractGolem implements HasHomeChest {
 
     /** Radius des kreisförmigen Suchbereichs um die Truhe, siehe {@link #fieldPositions()}. */
     private static final int FIELD_RADIUS = 20;

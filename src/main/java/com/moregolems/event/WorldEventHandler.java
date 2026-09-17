@@ -6,6 +6,7 @@ import com.moregolems.entity.BeetrootGolem;
 import com.moregolems.entity.CarrotGolem;
 import com.moregolems.entity.CropGolem;
 import com.moregolems.entity.EarthGolem;
+import com.moregolems.entity.HasHomeChest;
 import com.moregolems.entity.PotatoGolem;
 import com.moregolems.entity.PumpkinGolem;
 import com.moregolems.entity.SugarCaneGolem;
@@ -28,9 +29,11 @@ import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.level.block.state.pattern.BlockPattern;
 import net.minecraft.world.level.block.state.pattern.BlockPatternBuilder;
 import net.minecraft.world.level.block.state.predicate.BlockStatePredicate;
+import net.minecraft.world.level.entity.EntityTypeTest;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 
 import java.util.function.BiFunction;
 
@@ -111,6 +114,30 @@ public final class WorldEventHandler {
                     || trySpawnSugarCaneGolem(server, pumpkinPos, basePos)
                     || trySpawnPumpkinGolem(server, pumpkinPos, basePos);
             if (spawned) return; // nur zur Klarheit, dass die Kurzschlussauswertung absichtlich ist
+        }
+    }
+
+    /**
+     * Entfernt einen Golem, sobald seine Heimat-Truhe abgebaut wird — ohne Truhe kann er ohnehin
+     * weder abliefern noch Nachschub holen, ein verwaister Golem wäre nur verwirrend. Gilt für
+     * jeden Golem-Typ dieses Mods einheitlich über {@link HasHomeChest}, statt für jeden Typ
+     * einzeln Sonderfälle zu brauchen. Reagiert bewusst auf {@link BreakBlockEvent} (löst nur aus,
+     * wenn ein Spieler den Block tatsächlich abbaut, nicht z.B. bei Explosionen) — passend zum
+     * Wortlaut "abgebaut". Feuert auf Client UND Server; hier interessiert nur der Server, auf dem
+     * die eigentliche Entity-Entfernung passiert.
+     */
+    @SubscribeEvent
+    public static void onChestBroken(BreakBlockEvent event) {
+        if (event.isCanceled()) return;
+        if (!(event.getLevel() instanceof ServerLevel server)) return;
+        if (!event.getState().is(Blocks.CHEST)) return;
+
+        BlockPos chestPos = event.getPos();
+        for (AbstractGolem golem : server.getEntities(
+                EntityTypeTest.forClass(AbstractGolem.class),
+                candidate -> candidate instanceof HasHomeChest homeOwner && chestPos.equals(homeOwner.getHomeChestPos())
+        )) {
+            golem.discard();
         }
     }
 

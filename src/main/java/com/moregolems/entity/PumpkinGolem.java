@@ -34,7 +34,7 @@ import java.util.List;
  * nur frisch gewachsene, ungeschnitzte Kürbisblöcke gelten als Ernte. Pflanzt selbst nichts neu
  * (die Kürbisranke daneben lässt von allein neue Kürbisse nachwachsen). Komplett friedlich.
  */
-public class PumpkinGolem extends AbstractGolem {
+public class PumpkinGolem extends AbstractGolem implements HasHomeChest {
 
     /** Radius des kreisförmigen Suchbereichs um die Truhe, siehe {@link #fieldPositions()}. */
     private static final int FIELD_RADIUS = 100;

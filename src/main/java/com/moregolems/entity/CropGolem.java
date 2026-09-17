@@ -44,7 +44,7 @@ import java.util.List;
  * {@link #getCarriedSeeds()} (Pflanzgut, wird sofort wiederverwendet) oder
  * {@link #getCarriedProduct()} (Ertrag, wird nur zur Kiste getragen).
  */
-public abstract class CropGolem extends AbstractGolem {
+public abstract class CropGolem extends AbstractGolem implements HasHomeChest {
 
     /**
      * Die Feldfläche deckt exakt den Bereich ab, den auch ein Wasserblock bewässern würde:
