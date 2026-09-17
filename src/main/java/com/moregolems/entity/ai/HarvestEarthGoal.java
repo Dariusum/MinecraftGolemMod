@@ -175,9 +175,10 @@ public class HarvestEarthGoal extends Goal {
         server.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
         server.levelEvent(2001, pos, Block.getId(state));
 
-        // Der Golem traegt sichtbar genau den abgebauten Blocktyp und legt ihn spaeter unveraendert
-        // als 1 Item in der Truhe ab (DepositEarthGoal) - keine Loot-Table-Ermittlung noetig, Erde/
-        // Grasblock droppen ohnehin immer genau sich selbst.
-        golem.setCarriedBlock(state.getBlock().defaultBlockState());
+        // Wie beim Spieler-Abbau ohne Verzauberung: ein Grasblock liefert normale Erde, nicht sich
+        // selbst (Vanillas GrassBlock-Loot-Table droppt ohne Silk Touch immer Blocks.DIRT). Der
+        // Golem traegt/legt daher bei Grasblock sichtbar einen Erdblock, nicht den Grasblock selbst.
+        BlockState dropState = state.is(Blocks.GRASS_BLOCK) ? Blocks.DIRT.defaultBlockState() : state.getBlock().defaultBlockState();
+        golem.setCarriedBlock(dropState);
     }
 }
