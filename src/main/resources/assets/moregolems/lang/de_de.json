@@ -7,5 +7,14 @@
   "entity.moregolems.bamboo_golem": "Bambusgolem",
   "entity.moregolems.sugar_cane_golem": "Zuckerrohrgolem",
   "entity.moregolems.pumpkin_golem": "Kürbisgolem",
-  "entity.moregolems.earth_golem": "Erdgolem"
+  "entity.moregolems.earth_golem": "Erdgolem",
+  "entity.moregolems.stone_golem": "Steingolem",
+  "entity.moregolems.granite_golem": "Granitgolem",
+  "entity.moregolems.diorite_golem": "Dioritgolem",
+  "entity.moregolems.andesite_golem": "Andesitgolem",
+  "entity.moregolems.deepslate_golem": "Tiefenschiefergolem",
+  "entity.moregolems.tuff_golem": "Tuffgolem",
+  "entity.moregolems.calcite_golem": "Calcitgolem",
+  "entity.moregolems.sand_golem": "Sandgolem",
+  "entity.moregolems.gravel_golem": "Kiesgolem"
 }

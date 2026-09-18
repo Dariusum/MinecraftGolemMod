@@ -1,15 +1,25 @@
 package com.moregolems.event;
 
 import com.moregolems.MoreGolemsMod;
+import com.moregolems.entity.AndesiteGolem;
 import com.moregolems.entity.BambooGolem;
 import com.moregolems.entity.BeetrootGolem;
+import com.moregolems.entity.CalciteGolem;
 import com.moregolems.entity.CarrotGolem;
 import com.moregolems.entity.CropGolem;
+import com.moregolems.entity.DeepslateGolem;
+import com.moregolems.entity.DioriteGolem;
 import com.moregolems.entity.EarthGolem;
+import com.moregolems.entity.GraniteGolem;
+import com.moregolems.entity.GravelGolem;
 import com.moregolems.entity.HasHomeChest;
+import com.moregolems.entity.MiningGolem;
 import com.moregolems.entity.PotatoGolem;
 import com.moregolems.entity.PumpkinGolem;
+import com.moregolems.entity.SandGolem;
+import com.moregolems.entity.StoneGolem;
 import com.moregolems.entity.SugarCaneGolem;
+import com.moregolems.entity.TuffGolem;
 import com.moregolems.entity.WheatGolem;
 import com.moregolems.entity.WoolGolem;
 import com.moregolems.registry.ModEntities;
@@ -34,7 +44,12 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.BiFunction;
 
 @EventBusSubscriber(modid = MoreGolemsMod.MODID)
@@ -43,21 +58,59 @@ public final class WorldEventHandler {
     private WorldEventHandler() {}
 
     /**
-     * Erdgolem-Struktur: dasselbe T-Muster wie ein echter Eisengolem (siehe
-     * {@code CarvedPumpkinBlock.getOrCreateIronGolemFull} in Vanilla), aber mit Erdblöcken statt
-     * Eisenblöcken und einer Truhe statt eines vierten Erdblocks an der Beine-Position. Genau wie
-     * beim echten Eisengolem prüft {@link BlockPattern#find} automatisch alle 4 Himmelsrichtungen,
-     * die Struktur kann also in beliebiger Ausrichtung gebaut werden.
+     * Ein MiningGolem-Bau-Rezept: [buildMaterial] ist sowohl der Block, aus dem die T-Struktur
+     * besteht, als auch der Block, der in {@link #onNeighborNotify} als Auslöser geprüft wird.
+     * [entityType] bleibt bewusst ein {@link DeferredHolder} statt eines aufgelösten
+     * {@link EntityType} — wird diese Liste (wie hier) als statisches Feld beim Laden der Klasse
+     * aufgebaut, ist die Entity-Registry zu diesem Zeitpunkt noch nicht zwingend fertig befüllt;
+     * {@code DeferredHolder.get()} erst bei tatsächlicher Verwendung in
+     * {@link #trySpawnMiningGolem} aufzurufen vermeidet ein "unbound value" beim Start.
      */
-    private static final BlockPattern EARTH_GOLEM_PATTERN = BlockPatternBuilder.start()
-            .aisle("~^~",
-                   "###",
-                   "~C~")
-            .where('^', BlockInWorld.hasState(state -> state.is(Blocks.CARVED_PUMPKIN) || state.is(Blocks.JACK_O_LANTERN)))
-            .where('#', BlockInWorld.hasState(BlockStatePredicate.forBlock(Blocks.DIRT)))
-            .where('C', BlockInWorld.hasState(state -> state.is(Blocks.CHEST)))
-            .where('~', BlockInWorld.hasState(BlockBehaviour.BlockStateBase::isAir))
-            .build();
+    private record MiningGolemDefinition<T extends MiningGolem>(
+            Block buildMaterial,
+            String germanName,
+            DeferredHolder<EntityType<?>, EntityType<T>> entityType,
+            BiFunction<EntityType<? extends AbstractGolem>, ServerLevel, T> factory
+    ) {}
+
+    /**
+     * Alle Golems, die durch dieselbe Eisengolem-artige T-Struktur entstehen (siehe
+     * {@link #miningGolemPattern}), nur mit unterschiedlichem Baumaterial.
+     */
+    private static final List<MiningGolemDefinition<?>> MINING_GOLEM_DEFINITIONS = List.of(
+            new MiningGolemDefinition<>(Blocks.DIRT, "Erdgolem", ModEntities.EARTH_GOLEM, EarthGolem::new),
+            new MiningGolemDefinition<>(Blocks.STONE, "Steingolem", ModEntities.STONE_GOLEM, StoneGolem::new),
+            new MiningGolemDefinition<>(Blocks.GRANITE, "Granitgolem", ModEntities.GRANITE_GOLEM, GraniteGolem::new),
+            new MiningGolemDefinition<>(Blocks.DIORITE, "Dioritgolem", ModEntities.DIORITE_GOLEM, DioriteGolem::new),
+            new MiningGolemDefinition<>(Blocks.ANDESITE, "Andesitgolem", ModEntities.ANDESITE_GOLEM, AndesiteGolem::new),
+            new MiningGolemDefinition<>(Blocks.DEEPSLATE, "Tiefenschiefergolem", ModEntities.DEEPSLATE_GOLEM, DeepslateGolem::new),
+            new MiningGolemDefinition<>(Blocks.TUFF, "Tuffgolem", ModEntities.TUFF_GOLEM, TuffGolem::new),
+            new MiningGolemDefinition<>(Blocks.CALCITE, "Calcitgolem", ModEntities.CALCITE_GOLEM, CalciteGolem::new),
+            new MiningGolemDefinition<>(Blocks.SAND, "Sandgolem", ModEntities.SAND_GOLEM, SandGolem::new),
+            new MiningGolemDefinition<>(Blocks.GRAVEL, "Kiesgolem", ModEntities.GRAVEL_GOLEM, GravelGolem::new)
+    );
+
+    /** Pro Baumaterial nur einmal gebaut (Muster-Aufbau ist trivial, aber unnoetig oefter wiederholen). */
+    private static final Map<Block, BlockPattern> MINING_GOLEM_PATTERNS = new HashMap<>();
+
+    /**
+     * MiningGolem-Struktur: dasselbe T-Muster wie ein echter Eisengolem (siehe
+     * {@code CarvedPumpkinBlock.getOrCreateIronGolemFull} in Vanilla), aber mit [buildMaterial]
+     * statt Eisenblöcken und einer Truhe statt eines vierten Materialblocks an der
+     * Beine-Position. Genau wie beim echten Eisengolem prüft {@link BlockPattern#find} automatisch
+     * alle 4 Himmelsrichtungen, die Struktur kann also in beliebiger Ausrichtung gebaut werden.
+     */
+    private static BlockPattern miningGolemPattern(Block buildMaterial) {
+        return MINING_GOLEM_PATTERNS.computeIfAbsent(buildMaterial, material -> BlockPatternBuilder.start()
+                .aisle("~^~",
+                       "###",
+                       "~C~")
+                .where('^', BlockInWorld.hasState(state -> state.is(Blocks.CARVED_PUMPKIN) || state.is(Blocks.JACK_O_LANTERN)))
+                .where('#', BlockInWorld.hasState(BlockStatePredicate.forBlock(material)))
+                .where('C', BlockInWorld.hasState(state -> state.is(Blocks.CHEST)))
+                .where('~', BlockInWorld.hasState(BlockBehaviour.BlockStateBase::isAir))
+                .build());
+    }
 
     /**
      * Erschafft Golems analog zum Kupfer-Golem: ein geschnitzter Kürbis auf dem passenden Block
@@ -78,10 +131,11 @@ public final class WorldEventHandler {
      *   {@link #trySpawnSugarCaneGolem}.
      * - Kürbisgolem: Truhe mit genau einem Stück Kürbiskerne (analog zu Weizen-/Rote-Bete-Golem:
      *   Auslöse-Item ist der Samen, nicht der Ertrag) — siehe {@link #trySpawnPumpkinGolem}.
-     * - Erdgolem: anders als alle übrigen Golems kein Kürbis-auf-Einzelblock-Rezept, sondern eine
-     *   ganze Struktur wie beim echten Eisengolem (drei Erdblöcke im Eisengolem-T-Muster, Truhe
-     *   statt vierten Erdblocks an der Beine-Position, Kürbis obendrauf) — siehe
-     *   {@link #EARTH_GOLEM_PATTERN}, {@link #trySpawnEarthGolem}.
+     * - MiningGolems (Erde, Stein, Granit, Diorit, Andesit, Tiefenschiefer, Tuff, Calcit, Sand,
+     *   Kies): anders als alle übrigen Golems kein Kürbis-auf-Einzelblock-Rezept, sondern eine
+     *   ganze Struktur wie beim echten Eisengolem (drei Blöcke des jeweiligen Materials im
+     *   Eisengolem-T-Muster, Truhe statt eines vierten Materialblocks an der Beine-Position,
+     *   Kürbis obendrauf) — siehe {@link #MINING_GOLEM_DEFINITIONS}, {@link #trySpawnMiningGolem}.
      *
      * Reagiert auf {@code NeighborNotifyEvent} statt (wie zunächst versucht)
      * {@code BlockEvent.EntityPlaceEvent} — Letzteres feuert nur bei Spieler-/Mob-Platzierung,
@@ -103,8 +157,6 @@ public final class WorldEventHandler {
 
         if (baseState.is(Blocks.WOOL.white())) {
             spawnWoolGolem(server, pumpkinPos, basePos);
-        } else if (baseState.is(Blocks.DIRT)) {
-            trySpawnEarthGolem(server, pumpkinPos);
         } else if (baseState.is(Blocks.CHEST)) {
             boolean spawned = trySpawnCropGolem(server, pumpkinPos, basePos, Items.CARROT, ModEntities.CARROT_GOLEM.get(), CarrotGolem::new)
                     || trySpawnCropGolem(server, pumpkinPos, basePos, Items.POTATO, ModEntities.POTATO_GOLEM.get(), PotatoGolem::new)
@@ -114,7 +166,14 @@ public final class WorldEventHandler {
                     || trySpawnSugarCaneGolem(server, pumpkinPos, basePos)
                     || trySpawnPumpkinGolem(server, pumpkinPos, basePos);
             if (spawned) return; // nur zur Klarheit, dass die Kurzschlussauswertung absichtlich ist
+        } else {
+            findMiningGolemDefinition(baseState.getBlock())
+                    .ifPresent(def -> trySpawnMiningGolem(server, pumpkinPos, def));
         }
+    }
+
+    private static Optional<MiningGolemDefinition<?>> findMiningGolemDefinition(Block block) {
+        return MINING_GOLEM_DEFINITIONS.stream().filter(def -> def.buildMaterial() == block).findFirst();
     }
 
     /**
@@ -154,15 +213,17 @@ public final class WorldEventHandler {
     }
 
     /**
-     * Erdgolem: eigener Spawn-Pfad über {@link #EARTH_GOLEM_PATTERN} statt der einfachen
-     * Ein-Block-Prüfung der übrigen Golems, da die Struktur (wie beim echten Eisengolem) mehrere
-     * Blöcke in beliebiger Ausrichtung umfasst.
-     *
-     * @return true, falls die volle T-Struktur gefunden und der Golem erschaffen wurde.
+     * MiningGolem (Erde, Stein, Granit, Diorit, Andesit, Tiefenschiefer, Tuff, Calcit, Sand, Kies):
+     * eigener Spawn-Pfad über {@link #miningGolemPattern} statt der einfachen Ein-Block-Prüfung der
+     * übrigen Golems, da die Struktur (wie beim echten Eisengolem) mehrere Blöcke in beliebiger
+     * Ausrichtung umfasst.
      */
-    private static boolean trySpawnEarthGolem(ServerLevel server, BlockPos pumpkinPos) {
-        BlockPattern.BlockPatternMatch match = EARTH_GOLEM_PATTERN.find(server, pumpkinPos);
-        if (match == null) return false;
+    private static <T extends MiningGolem> void trySpawnMiningGolem(
+            ServerLevel server, BlockPos pumpkinPos, MiningGolemDefinition<T> definition
+    ) {
+        BlockPattern pattern = miningGolemPattern(definition.buildMaterial());
+        BlockPattern.BlockPatternMatch match = pattern.find(server, pumpkinPos);
+        if (match == null) return;
 
         BlockPos chestPos = match.getBlock(1, 2, 0).getPos();
 
@@ -178,14 +239,13 @@ public final class WorldEventHandler {
             }
         }
 
-        EarthGolem golem = new EarthGolem(ModEntities.EARTH_GOLEM.get(), server);
+        T golem = definition.factory().apply(definition.entityType().get(), server);
         BlockPos spawnPos = chestPos.above();
         golem.setPos(spawnPos.getX() + 0.5, spawnPos.getY(), spawnPos.getZ() + 0.5);
         golem.setHomeChestPos(chestPos);
         server.addFreshEntity(golem);
 
-        MoreGolemsMod.LOG.info("Erdgolem erschaffen bei {} (Truhe bei {})", spawnPos, chestPos);
-        return true;
+        MoreGolemsMod.LOG.info("{} erschaffen bei {} (Truhe bei {})", definition.germanName(), spawnPos, chestPos);
     }
 
     /** @return true, falls die Truhe genau [seedItem] enthielt und der Golem erschaffen wurde. */

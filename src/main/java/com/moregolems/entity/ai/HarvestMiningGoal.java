@@ -1,6 +1,6 @@
 package com.moregolems.entity.ai;
 
-import com.moregolems.entity.EarthGolem;
+import com.moregolems.entity.MiningGolem;
 import com.moregolems.util.ContainerUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -18,11 +18,13 @@ import java.util.EnumSet;
 import java.util.List;
 
 /**
- * Findet den nächsten abbaubaren Erd-/Grasblock im quadratischen {@link #WORK_RADIUS}-Bereich um
- * die Truhe, läuft hin und baut ihn ab — der Golem trägt danach sichtbar genau diesen einen Block
- * (siehe {@link EarthGolem#setCarriedBlock}), bis {@link DepositEarthGoal} ihn in der Truhe abliegt.
+ * Findet den nächsten abbaubaren Block (siehe {@link MiningGolem#isTargetBlock}) im quadratischen
+ * {@link #WORK_RADIUS}-Bereich um die Truhe, läuft hin und baut ihn ab — der Golem trägt danach
+ * sichtbar genau einen Block (siehe {@link MiningGolem#resultBlockState}), bis
+ * {@link DepositMiningGoal} ihn in der Truhe abliegt.
  *
- * Regeln für einen gültigen Zielblock (siehe {@link #findTarget}):
+ * Regeln für einen gültigen Zielblock (siehe {@link #findTarget}), für jeden Golem dieser Art
+ * gleich, unabhängig vom jeweiligen Zielmaterial:
  * <ol>
  *     <li>Nur auf oder über Truhen-Höhe.</li>
  *     <li>Nur Blöcke, die direkt exponiert sind (nichts liegt direkt darüber) — effizient über
@@ -40,7 +42,7 @@ import java.util.List;
  * Der volle Suchbereich wird nicht jeden Tick abgesucht: findet ein Durchlauf nichts, wartet das
  * Ziel {@link #RESCAN_INTERVAL} Ticks (analog {@code HarvestPumpkinGoal}).
  */
-public class HarvestEarthGoal extends Goal {
+public class HarvestMiningGoal extends Goal {
 
     /** Quadratischer Suchradius um die Truhe (Chebyshev-Distanz), leicht anpassbar. */
     static final int WORK_RADIUS = 16;
@@ -48,19 +50,15 @@ public class HarvestEarthGoal extends Goal {
     private static final double REACH_DISTANCE = 2.0;
     private static final int RESCAN_INTERVAL = 40;
 
-    private final EarthGolem golem;
+    private final MiningGolem golem;
     private final double speed;
     private BlockPos target;
     private int ticksUntilRescan;
 
-    public HarvestEarthGoal(EarthGolem golem, double speed) {
+    public HarvestMiningGoal(MiningGolem golem, double speed) {
         this.golem = golem;
         this.speed = speed;
         setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
-    }
-
-    private static boolean isEarthBlock(BlockState state) {
-        return state.is(Blocks.DIRT) || state.is(Blocks.GRASS_BLOCK);
     }
 
     /** Y-Position des obersten, nicht-luftigen Blocks der Spalte (Regel 2, siehe Klassendoc). */
@@ -93,8 +91,7 @@ public class HarvestEarthGoal extends Goal {
     @Override
     public boolean canContinueToUse() {
         if (target == null) return false;
-        BlockState state = golem.level().getBlockState(target);
-        return isEarthBlock(state);
+        return golem.isTargetBlock(golem.level().getBlockState(target));
     }
 
     private BlockPos findTarget(ServerLevel server, BlockPos chestPos) {
@@ -109,7 +106,7 @@ public class HarvestEarthGoal extends Goal {
 
                 BlockPos pos = new BlockPos(x, y, z);
                 BlockState state = server.getBlockState(pos);
-                if (!isEarthBlock(state)) continue;
+                if (!golem.isTargetBlock(state)) continue;
 
                 if (!respectsStepLimit(server, pos)) continue; // Regel 3
 
@@ -157,7 +154,7 @@ public class HarvestEarthGoal extends Goal {
 
         if (golem.distanceToSqr(target.getX() + 0.5, target.getY() + 1, target.getZ() + 0.5) > REACH_DISTANCE * REACH_DISTANCE) {
             // Nur neu anfordern, wenn die Navigation nicht schon unterwegs ist - siehe
-            // DepositEarthGoal fuer die ausfuehrliche Begruendung.
+            // DepositMiningGoal fuer die ausfuehrliche Begruendung.
             if (golem.getNavigation().isDone()) {
                 golem.getNavigation().moveTo(target.getX() + 0.5, target.getY() + 1, target.getZ() + 0.5, speed);
             }
@@ -170,15 +167,11 @@ public class HarvestEarthGoal extends Goal {
         BlockPos pos = target;
         target = null;
         BlockState state = server.getBlockState(pos);
-        if (!isEarthBlock(state)) return;
+        if (!golem.isTargetBlock(state)) return;
 
         server.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
         server.levelEvent(2001, pos, Block.getId(state));
 
-        // Wie beim Spieler-Abbau ohne Verzauberung: ein Grasblock liefert normale Erde, nicht sich
-        // selbst (Vanillas GrassBlock-Loot-Table droppt ohne Silk Touch immer Blocks.DIRT). Der
-        // Golem traegt/legt daher bei Grasblock sichtbar einen Erdblock, nicht den Grasblock selbst.
-        BlockState dropState = state.is(Blocks.GRASS_BLOCK) ? Blocks.DIRT.defaultBlockState() : state.getBlock().defaultBlockState();
-        golem.setCarriedBlock(dropState);
+        golem.setCarriedBlock(golem.resultBlockState(state));
     }
 }

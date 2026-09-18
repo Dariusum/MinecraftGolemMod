@@ -1,13 +1,22 @@
 package com.moregolems.registry;
 
 import com.moregolems.MoreGolemsMod;
+import com.moregolems.entity.AndesiteGolem;
 import com.moregolems.entity.BambooGolem;
 import com.moregolems.entity.BeetrootGolem;
+import com.moregolems.entity.CalciteGolem;
 import com.moregolems.entity.CarrotGolem;
+import com.moregolems.entity.DeepslateGolem;
+import com.moregolems.entity.DioriteGolem;
 import com.moregolems.entity.EarthGolem;
+import com.moregolems.entity.GraniteGolem;
+import com.moregolems.entity.GravelGolem;
 import com.moregolems.entity.PotatoGolem;
 import com.moregolems.entity.PumpkinGolem;
+import com.moregolems.entity.SandGolem;
+import com.moregolems.entity.StoneGolem;
 import com.moregolems.entity.SugarCaneGolem;
+import com.moregolems.entity.TuffGolem;
 import com.moregolems.entity.WheatGolem;
 import com.moregolems.entity.WoolGolem;
 import net.minecraft.core.registries.Registries;
@@ -116,6 +125,80 @@ public final class ModEntities {
                     .sized(1.4F, 2.7F)
                     .clientTrackingRange(10)
                     .build(EARTH_GOLEM_KEY));
+
+    // Die folgenden 9 Golems sind wie EARTH_GOLEM aufgebaut (Eisengolem-Groesse/-Statur, siehe
+    // dortiger Kommentar) - jeweils nur mit anderem Material.
+    public static final ResourceKey<EntityType<?>> STONE_GOLEM_KEY =
+            ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(MODID, "stone_golem"));
+    public static final DeferredHolder<EntityType<?>, EntityType<StoneGolem>> STONE_GOLEM =
+            ENTITY_TYPES.register("stone_golem", () -> EntityType.Builder.of(StoneGolem::new, MobCategory.MISC)
+                    .sized(1.4F, 2.7F)
+                    .clientTrackingRange(10)
+                    .build(STONE_GOLEM_KEY));
+
+    public static final ResourceKey<EntityType<?>> GRANITE_GOLEM_KEY =
+            ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(MODID, "granite_golem"));
+    public static final DeferredHolder<EntityType<?>, EntityType<GraniteGolem>> GRANITE_GOLEM =
+            ENTITY_TYPES.register("granite_golem", () -> EntityType.Builder.of(GraniteGolem::new, MobCategory.MISC)
+                    .sized(1.4F, 2.7F)
+                    .clientTrackingRange(10)
+                    .build(GRANITE_GOLEM_KEY));
+
+    public static final ResourceKey<EntityType<?>> DIORITE_GOLEM_KEY =
+            ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(MODID, "diorite_golem"));
+    public static final DeferredHolder<EntityType<?>, EntityType<DioriteGolem>> DIORITE_GOLEM =
+            ENTITY_TYPES.register("diorite_golem", () -> EntityType.Builder.of(DioriteGolem::new, MobCategory.MISC)
+                    .sized(1.4F, 2.7F)
+                    .clientTrackingRange(10)
+                    .build(DIORITE_GOLEM_KEY));
+
+    public static final ResourceKey<EntityType<?>> ANDESITE_GOLEM_KEY =
+            ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(MODID, "andesite_golem"));
+    public static final DeferredHolder<EntityType<?>, EntityType<AndesiteGolem>> ANDESITE_GOLEM =
+            ENTITY_TYPES.register("andesite_golem", () -> EntityType.Builder.of(AndesiteGolem::new, MobCategory.MISC)
+                    .sized(1.4F, 2.7F)
+                    .clientTrackingRange(10)
+                    .build(ANDESITE_GOLEM_KEY));
+
+    public static final ResourceKey<EntityType<?>> DEEPSLATE_GOLEM_KEY =
+            ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(MODID, "deepslate_golem"));
+    public static final DeferredHolder<EntityType<?>, EntityType<DeepslateGolem>> DEEPSLATE_GOLEM =
+            ENTITY_TYPES.register("deepslate_golem", () -> EntityType.Builder.of(DeepslateGolem::new, MobCategory.MISC)
+                    .sized(1.4F, 2.7F)
+                    .clientTrackingRange(10)
+                    .build(DEEPSLATE_GOLEM_KEY));
+
+    public static final ResourceKey<EntityType<?>> TUFF_GOLEM_KEY =
+            ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(MODID, "tuff_golem"));
+    public static final DeferredHolder<EntityType<?>, EntityType<TuffGolem>> TUFF_GOLEM =
+            ENTITY_TYPES.register("tuff_golem", () -> EntityType.Builder.of(TuffGolem::new, MobCategory.MISC)
+                    .sized(1.4F, 2.7F)
+                    .clientTrackingRange(10)
+                    .build(TUFF_GOLEM_KEY));
+
+    public static final ResourceKey<EntityType<?>> CALCITE_GOLEM_KEY =
+            ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(MODID, "calcite_golem"));
+    public static final DeferredHolder<EntityType<?>, EntityType<CalciteGolem>> CALCITE_GOLEM =
+            ENTITY_TYPES.register("calcite_golem", () -> EntityType.Builder.of(CalciteGolem::new, MobCategory.MISC)
+                    .sized(1.4F, 2.7F)
+                    .clientTrackingRange(10)
+                    .build(CALCITE_GOLEM_KEY));
+
+    public static final ResourceKey<EntityType<?>> SAND_GOLEM_KEY =
+            ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(MODID, "sand_golem"));
+    public static final DeferredHolder<EntityType<?>, EntityType<SandGolem>> SAND_GOLEM =
+            ENTITY_TYPES.register("sand_golem", () -> EntityType.Builder.of(SandGolem::new, MobCategory.MISC)
+                    .sized(1.4F, 2.7F)
+                    .clientTrackingRange(10)
+                    .build(SAND_GOLEM_KEY));
+
+    public static final ResourceKey<EntityType<?>> GRAVEL_GOLEM_KEY =
+            ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(MODID, "gravel_golem"));
+    public static final DeferredHolder<EntityType<?>, EntityType<GravelGolem>> GRAVEL_GOLEM =
+            ENTITY_TYPES.register("gravel_golem", () -> EntityType.Builder.of(GravelGolem::new, MobCategory.MISC)
+                    .sized(1.4F, 2.7F)
+                    .clientTrackingRange(10)
+                    .build(GRAVEL_GOLEM_KEY));
 
     private ModEntities() {}
 

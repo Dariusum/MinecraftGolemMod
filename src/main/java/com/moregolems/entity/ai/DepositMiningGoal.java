@@ -1,6 +1,6 @@
 package com.moregolems.entity.ai;
 
-import com.moregolems.entity.EarthGolem;
+import com.moregolems.entity.MiningGolem;
 import com.moregolems.util.ContainerUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -12,22 +12,23 @@ import net.minecraft.world.level.block.state.BlockState;
 import java.util.EnumSet;
 
 /**
- * Trägt den vom Golem gehaltenen Erd-/Grasblock (siehe {@link HarvestEarthGoal}) zur Truhe und legt
- * ihn dort als ein Item ab. Ist die Truhe voll, schlägt das Ablegen fehl und der Golem bleibt (schon
- * an der Truhe angekommen) einfach stehen — das erfüllt implizit "bleibt vor der Kiste stehen bei
+ * Trägt den vom Golem gehaltenen Block (siehe {@link HarvestMiningGoal}) zur Truhe und legt ihn
+ * dort als ein Item ab. Ist die Truhe voll, schlägt das Ablegen fehl und der Golem bleibt (schon an
+ * der Truhe angekommen) einfach stehen — das erfüllt implizit "bleibt vor der Kiste stehen bei
  * voller Kiste", ohne dass dafür ein Sonderfall nötig wäre.
  */
-public class DepositEarthGoal extends Goal {
+public class DepositMiningGoal extends Goal {
 
-    // Grosszuegiger als bei den uebrigen Golems (dort 2.0): der Golem steht AUF seiner Truhe, einer
-    // einzelnen, von offenem Boden umgebenen Zielkachel ohne "Zulauf" - die Wegfindung naehert sich
-    // ihr empirisch manchmal nur bis auf ~2.2-2.5 Bloecke an, statt exakt zu zentrieren.
+    // Grosszuegiger als bei den Feld-/Ernte-Golems dieses Mods (dort 2.0): der Golem steht AUF
+    // seiner Truhe, einer einzelnen, von offenem Boden umgebenen Zielkachel ohne "Zulauf" - die
+    // Wegfindung naehert sich ihr empirisch manchmal nur bis auf ~2.2-2.5 Bloecke an, statt exakt
+    // zu zentrieren.
     private static final double REACH_DISTANCE = 3.0;
 
-    private final EarthGolem golem;
+    private final MiningGolem golem;
     private final double speed;
 
-    public DepositEarthGoal(EarthGolem golem, double speed) {
+    public DepositMiningGoal(MiningGolem golem, double speed) {
         this.golem = golem;
         this.speed = speed;
         setFlags(EnumSet.of(Flag.MOVE));
@@ -53,10 +54,10 @@ public class DepositEarthGoal extends Goal {
         BlockPos chestPos = golem.getHomeChestPos();
         if (chestPos == null) return;
 
-        // Der Golem steht AUF seiner Truhe (siehe WorldEventHandler#trySpawnEarthGolem), anders als
-        // bei allen uebrigen Golems, die NEBEN ihrer Truhe auf derselben Ebene stehen - Zielpunkt
-        // ist daher eine Ebene ueber der Truhe, sonst zielt die Navigation in den soliden
-        // Truhen-/Boden-Block hinein und findet nie einen gueltigen Pfad.
+        // Der Golem steht AUF seiner Truhe (siehe WorldEventHandler#trySpawnMiningGolem), anders
+        // als bei den Feld-/Ernte-Golems dieses Mods, die NEBEN ihrer Truhe auf derselben Ebene
+        // stehen - Zielpunkt ist daher eine Ebene ueber der Truhe, sonst zielt die Navigation in
+        // den soliden Truhen-/Boden-Block hinein und findet nie einen gueltigen Pfad.
         BlockPos standPos = chestPos.above();
         if (golem.distanceToSqr(standPos.getX() + 0.5, standPos.getY(), standPos.getZ() + 0.5) > REACH_DISTANCE * REACH_DISTANCE) {
             // Nur neu anfordern, wenn die Navigation nicht schon unterwegs ist - staendiges

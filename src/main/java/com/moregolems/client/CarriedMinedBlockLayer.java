@@ -10,23 +10,23 @@ import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 
 /**
- * Zeichnet den vom Erdgolem gehaltenen Block sichtbar vor seinem Körper, analog zu Vanillas
- * {@code CarriedBlockLayer} beim Enderman — dessen Klasse ist aber fest an
+ * Zeichnet den von einem {@code MiningGolem} gehaltenen Block sichtbar vor seinem Körper, analog zu
+ * Vanillas {@code CarriedBlockLayer} beim Enderman — dessen Klasse ist aber fest an
  * {@code EndermanRenderState}/{@code EndermanModel} gebunden und daher hier nicht wiederverwendbar.
  *
  * Die genauen Versatz-/Skalierungswerte sind ein Startpunkt (an Endermans Werte angelehnt, aber für
  * die deutlich größere Eisengolem-Statur nach oben/vorne verschoben) und müssen im Spiel visuell
  * nachjustiert werden.
  */
-public class CarriedDirtBlockLayer extends RenderLayer<EarthGolemRenderState, IronGolemModel> {
+public class CarriedMinedBlockLayer extends RenderLayer<MiningGolemRenderState, IronGolemModel> {
 
-    public CarriedDirtBlockLayer(RenderLayerParent<EarthGolemRenderState, IronGolemModel> renderer) {
+    public CarriedMinedBlockLayer(RenderLayerParent<MiningGolemRenderState, IronGolemModel> renderer) {
         super(renderer);
     }
 
     @Override
     public void submit(PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords,
-                        EarthGolemRenderState state, float yRot, float xRot) {
+                        MiningGolemRenderState state, float yRot, float xRot) {
         BlockModelRenderState carriedBlock = state.carriedBlock;
         if (carriedBlock.isEmpty()) return;
 

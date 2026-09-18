@@ -8,10 +8,10 @@ import net.minecraft.client.renderer.entity.state.IronGolemRenderState;
  * {@code IronGolemModel#setupAnim} generisch an genau diesen Zustandstyp gebunden ist — ohne diese
  * Vererbung ließe sich das Modell nicht wiederverwenden. Die geerbten, Eisengolem-spezifischen
  * Felder (Angriffs-Animation, Blumen-Angebot, Rissigkeit) werden nie gesetzt und bleiben auf ihren
- * harmlosen Vanilla-Standardwerten (0 / NONE) — der komplett friedliche Erdgolem hat keine dieser
- * Mechaniken. Einziges eigenes Feld: der sichtbar getragene Block, analog
- * {@code EndermanRenderState.carriedBlock}.
+ * harmlosen Vanilla-Standardwerten (0 / NONE) — die {@code MiningGolem}-Familie ist komplett
+ * friedlich und hat keine dieser Mechaniken. Einziges eigenes Feld: der sichtbar getragene Block,
+ * analog {@code EndermanRenderState.carriedBlock}.
  */
-public class EarthGolemRenderState extends IronGolemRenderState {
+public class MiningGolemRenderState extends IronGolemRenderState {
     public final BlockModelRenderState carriedBlock = new BlockModelRenderState();
 }

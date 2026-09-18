@@ -50,16 +50,29 @@ Arbeitsweise: bewirtschaftet ein 10x10-Feld aus Erdblöcken auf Höhe der Truhe.
 - Bepflanzt leere Erdblöcke im Feld mit getragenem Bambus, holt bei Bedarf Nachschub aus der Truhe.
 - Legt überzähligen Bambus in der Truhe ab, sobald kein Erdblock im Feld mehr unbepflanzt ist.
 
-ERDGOLEM
-Rezept: anders als alle übrigen Golems keine Kiste mit Auslöse-Item, sondern eine ganze Struktur wie beim echten Eisengolem - drei Erdblöcke im selben T-Muster wie die drei Eisenblöcke eines Eisengolems, eine Truhe statt eines vierten Erdblocks an der Beine-Position, darauf ein geschnitzter Kürbis. Funktioniert wie beim echten Eisengolem in jeder Ausrichtung. Die Erdblöcke und der Kürbis verschwinden beim Erschaffen, die Truhe bleibt - der Golem steht auf ihr.
-Aussehen: wie ein Eisengolem, nur mit Erde texturiert. Trägt einen abgebauten Block sichtbar vor sich her (wie ein Enderman).
-Arbeitsweise: baut Erd- und Grasblöcke oberhalb seiner Truhen-Ebene in seinem Arbeitsbereich ab und legt sie in der Truhe ab - anders als alle übrigen Golems keine nachwachsende Ressource, sondern dauerhaftes Terraforming.
+MINING-GOLEMS (Erd-, Stein-, Granit-, Diorit-, Andesit-, Tiefenschiefer-, Tuff-, Calcit-, Sand- und Kiesgolem) — gemeinsame Arbeitsweise
+Rezept: anders als alle übrigen Golems keine Kiste mit Auslöse-Item, sondern eine ganze Struktur wie beim echten Eisengolem - drei Blöcke des jeweiligen Materials im selben T-Muster wie die drei Eisenblöcke eines Eisengolems, eine Truhe statt eines vierten Materialblocks an der Beine-Position, darauf ein geschnitzter Kürbis. Funktioniert wie beim echten Eisengolem in jeder Ausrichtung. Die Materialblöcke und der Kürbis verschwinden beim Erschaffen, die Truhe bleibt - der Golem steht auf ihr.
+Aussehen: wie ein Eisengolem, nur mit dem jeweiligen Material texturiert. Trägt einen abgebauten Block sichtbar vor sich her (wie ein Enderman).
+Arbeitsweise: baut sein Material oberhalb seiner Truhen-Ebene in seinem Arbeitsbereich ab und legt es in der Truhe ab - anders als die übrigen Golems keine nachwachsende Ressource, sondern dauerhaftes Terraforming/Abbau.
 - Baut nur Blöcke ab, die auf oder über Truhen-Höhe liegen.
 - Baut nur Blöcke ab, die direkt exponiert sind (nichts liegt direkt darüber).
 - Baut nur Blöcke ab, bei denen dadurch keine Stufe von mehr als 1 Block zu einem Nachbarblock entsteht.
 - Wählt immer den nächstgelegenen gültigen Block, bei Gleichstand den nördlichsten, danach den östlichsten.
 - Trägt jeweils nur einen Block gleichzeitig, legt ihn in der Truhe ab und holt sich den nächsten.
-- Bleibt bei voller Truhe oder ohne aktuelles Ziel bei seiner Truhe stehen, statt umherzuwandern.'''
+- Bleibt bei voller Truhe oder ohne aktuelles Ziel bei seiner Truhe stehen, statt umherzuwandern.
+- Verschwindet, sobald seine Truhe abgebaut wird (gilt für jeden Golem dieses Mods).
+
+Material je Typ:
+- Erdgolem: Erde/Grasblock → liefert Erde (Grasblock droppt wie beim Spieler-Abbau ohne Verzauberung normale Erde). Trägt zusätzlich eine Grasnarbe auf dem Kopf.
+- Steingolem: Stein → liefert Kopfsteinpflaster (wie beim Spieler-Abbau ohne Verzauberung).
+- Granitgolem: Granit → liefert Granit.
+- Dioritgolem: Diorit → liefert Diorit.
+- Andesitgolem: Andesit → liefert Andesit.
+- Tiefenschiefergolem: Tiefenschiefer → liefert Kopfsteintiefenschiefer (wie beim Spieler-Abbau ohne Verzauberung).
+- Tuffgolem: Tuffstein → liefert Tuffstein.
+- Calcitgolem: Calcit → liefert Calcit.
+- Sandgolem: Sand → liefert Sand.
+- Kiesgolem: Kies → liefert Kies (die seltene Feuerstein-Drop-Chance beim Spieler-Abbau wird bewusst nicht nachgebildet).'''
 
 [[dependencies.${mod_id}]]
 modId="neoforge"

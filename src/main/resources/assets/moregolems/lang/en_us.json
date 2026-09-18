@@ -7,5 +7,14 @@
   "entity.moregolems.bamboo_golem": "Bamboo Golem",
   "entity.moregolems.sugar_cane_golem": "Sugar Cane Golem",
   "entity.moregolems.pumpkin_golem": "Pumpkin Golem",
-  "entity.moregolems.earth_golem": "Earth Golem"
+  "entity.moregolems.earth_golem": "Earth Golem",
+  "entity.moregolems.stone_golem": "Stone Golem",
+  "entity.moregolems.granite_golem": "Granite Golem",
+  "entity.moregolems.diorite_golem": "Diorite Golem",
+  "entity.moregolems.andesite_golem": "Andesite Golem",
+  "entity.moregolems.deepslate_golem": "Deepslate Golem",
+  "entity.moregolems.tuff_golem": "Tuff Golem",
+  "entity.moregolems.calcite_golem": "Calcite Golem",
+  "entity.moregolems.sand_golem": "Sand Golem",
+  "entity.moregolems.gravel_golem": "Gravel Golem"
 }

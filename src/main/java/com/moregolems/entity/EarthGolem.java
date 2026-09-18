@@ -1,137 +1,29 @@
 package com.moregolems.entity;
 
-import com.moregolems.entity.ai.DepositEarthGoal;
-import com.moregolems.entity.ai.HarvestEarthGoal;
-import com.moregolems.entity.ai.StandByChestGoal;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.FloatGoal;
-import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.animal.golem.AbstractGolem;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
-
-import javax.annotation.Nullable;
-import java.util.Optional;
 
 /**
- * Sieht aus wie ein mit Erde texturierter Eisengolem und wird auch analog zu diesem gebaut: drei
- * Erdblöcke im selben T-Muster wie die drei Eisenblöcke eines echten Eisengolems (Arme/Torso-Reihe),
- * mit einer Truhe statt eines vierten Erdblocks an der Beine-Position, darauf ein geschnitzter
- * Kürbis (siehe {@code event.WorldEventHandler}). Beim Erschaffen verschwinden die drei Erdblöcke
- * und der Kürbis, die Truhe bleibt erhalten — der Golem steht darauf.
- *
- * Anders als alle übrigen Golems dieses Mods erntet er keine nachwachsende Ressource, sondern
- * terraformt dauerhaft: er baut Erd-/Grasblöcke in seinem Arbeitsbereich ab (siehe
- * {@link HarvestEarthGoal} für die genauen Regeln — nur auf/über Truhen-Höhe, nur direkt exponierte
- * Blöcke, keine Stufen über 1 Block, immer der nächste/nördlichste/nordöstlichste Block zuerst),
- * trägt jeweils genau einen Block sichtbar vor sich her (wie ein Enderman, siehe
- * {@code client.CarriedDirtBlockLayer}) und legt ihn in der Truhe ab ({@link DepositEarthGoal}).
- * Bleibt bei voller Truhe oder ohne aktuelles Ziel bei seiner Truhe stehen ({@link StandByChestGoal})
- * statt ziellos umherzuwandern. Komplett friedlich.
+ * Erdgolem: baut Erde und Grasblöcke ab. Ein Grasblock liefert dabei (wie beim Spieler-Abbau ohne
+ * Verzauberung) normale Erde, nicht sich selbst. Siehe {@link MiningGolem} für das gemeinsame
+ * Verhalten aller Golems dieser Art.
  */
-public class EarthGolem extends AbstractGolem implements HasHomeChest {
-
-    private static final EntityDataAccessor<Optional<BlockState>> DATA_CARRIED_BLOCK =
-            SynchedEntityData.defineId(EarthGolem.class, EntityDataSerializers.OPTIONAL_BLOCK_STATE);
-
-    /**
-     * Deckt den quadratischen Arbeitsbereich (siehe {@link HarvestEarthGoal#WORK_RADIUS}) plus
-     * reichlich Höhenspielraum ab — anders als bei allen übrigen Golems ist hier (anders als deren
-     * einzelne, feste Feld-Ebene) auch der senkrechte Abstand relevant, da abgetragenes Gelände
-     * beliebig hoch über der Truhe liegen kann. {@link Mob#setHomeTo} misst Luftlinie in 3D.
-     */
-    private static final int HOME_RADIUS = 48;
-
-    @Nullable
-    private BlockPos homeChestPos;
+public class EarthGolem extends MiningGolem {
 
     public EarthGolem(EntityType<? extends AbstractGolem> type, Level level) {
         super(type, level);
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {
-        super.defineSynchedData(builder);
-        builder.define(DATA_CARRIED_BLOCK, Optional.empty());
+    public boolean isTargetBlock(BlockState state) {
+        return state.is(Blocks.DIRT) || state.is(Blocks.GRASS_BLOCK);
     }
 
     @Override
-    protected void registerGoals() {
-        this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new HarvestEarthGoal(this, 1.0));
-        this.goalSelector.addGoal(2, new DepositEarthGoal(this, 1.0));
-        this.goalSelector.addGoal(3, new StandByChestGoal(this, 1.0));
-        this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 6.0F));
-        this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
-    }
-
-    /** Registriert über {@code EntityAttributeCreationEvent} in {@link com.moregolems.MoreGolemsMod}. */
-    public static AttributeSupplier.Builder createAttributes() {
-        return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 100.0)
-                .add(Attributes.MOVEMENT_SPEED, 0.25)
-                // Rein zur Mobilität ueber die Stufen, die die eigene Abbau-Regel (max. 1 Block
-                // Hoehenunterschied) erlaubt - kein Kampf-Attribut, der Golem ist komplett friedlich.
-                .add(Attributes.STEP_HEIGHT, 1.0);
-    }
-
-    @Nullable
-    public BlockPos getHomeChestPos() {
-        return homeChestPos;
-    }
-
-    public void setHomeChestPos(BlockPos pos) {
-        this.homeChestPos = pos.immutable();
-        // Vanillas eingebaute Heimatbindung sorgt dafuer, dass der Golem seinen Arbeitsbereich
-        // nicht verlaesst - siehe dieselbe Begruendung in CropGolem.
-        this.setHomeTo(this.homeChestPos, HOME_RADIUS);
-    }
-
-    public boolean isCarryingBlock() {
-        return this.entityData.get(DATA_CARRIED_BLOCK).isPresent();
-    }
-
-    @Nullable
-    public BlockState getCarriedBlock() {
-        return this.entityData.get(DATA_CARRIED_BLOCK).orElse(null);
-    }
-
-    public void setCarriedBlock(@Nullable BlockState state) {
-        this.entityData.set(DATA_CARRIED_BLOCK, Optional.ofNullable(state));
-    }
-
-    @Override
-    protected void addAdditionalSaveData(ValueOutput output) {
-        super.addAdditionalSaveData(output);
-        if (homeChestPos != null) {
-            output.store("HomeChest", BlockPos.CODEC, homeChestPos);
-        }
-        BlockState carried = getCarriedBlock();
-        if (carried != null) {
-            output.store("CarriedBlockState", BlockState.CODEC, carried);
-        }
-    }
-
-    @Override
-    protected void readAdditionalSaveData(ValueInput input) {
-        super.readAdditionalSaveData(input);
-        homeChestPos = input.read("HomeChest", BlockPos.CODEC).orElse(null);
-        if (homeChestPos != null) {
-            this.setHomeTo(homeChestPos, HOME_RADIUS);
-        }
-        setCarriedBlock(input.read("CarriedBlockState", BlockState.CODEC)
-                .filter(state -> !state.isAir())
-                .orElse(null));
+    public BlockState resultBlockState(BlockState minedState) {
+        return minedState.is(Blocks.GRASS_BLOCK) ? Blocks.DIRT.defaultBlockState() : super.resultBlockState(minedState);
     }
 }

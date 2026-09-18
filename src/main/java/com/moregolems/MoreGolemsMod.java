@@ -2,7 +2,7 @@ package com.moregolems;
 
 import com.moregolems.entity.BambooGolem;
 import com.moregolems.entity.CropGolem;
-import com.moregolems.entity.EarthGolem;
+import com.moregolems.entity.MiningGolem;
 import com.moregolems.entity.PumpkinGolem;
 import com.moregolems.entity.SugarCaneGolem;
 import com.moregolems.entity.WoolGolem;
@@ -33,7 +33,17 @@ public class MoreGolemsMod {
             event.put(ModEntities.BAMBOO_GOLEM.get(), BambooGolem.createAttributes().build());
             event.put(ModEntities.SUGAR_CANE_GOLEM.get(), SugarCaneGolem.createAttributes().build());
             event.put(ModEntities.PUMPKIN_GOLEM.get(), PumpkinGolem.createAttributes().build());
-            event.put(ModEntities.EARTH_GOLEM.get(), EarthGolem.createAttributes().build());
+            // Alle MiningGolem-Typen teilen sich dieselben Attribute (siehe MiningGolem.createAttributes).
+            event.put(ModEntities.EARTH_GOLEM.get(), MiningGolem.createAttributes().build());
+            event.put(ModEntities.STONE_GOLEM.get(), MiningGolem.createAttributes().build());
+            event.put(ModEntities.GRANITE_GOLEM.get(), MiningGolem.createAttributes().build());
+            event.put(ModEntities.DIORITE_GOLEM.get(), MiningGolem.createAttributes().build());
+            event.put(ModEntities.ANDESITE_GOLEM.get(), MiningGolem.createAttributes().build());
+            event.put(ModEntities.DEEPSLATE_GOLEM.get(), MiningGolem.createAttributes().build());
+            event.put(ModEntities.TUFF_GOLEM.get(), MiningGolem.createAttributes().build());
+            event.put(ModEntities.CALCITE_GOLEM.get(), MiningGolem.createAttributes().build());
+            event.put(ModEntities.SAND_GOLEM.get(), MiningGolem.createAttributes().build());
+            event.put(ModEntities.GRAVEL_GOLEM.get(), MiningGolem.createAttributes().build());
         });
 
         if (FMLEnvironment.getDist() == Dist.CLIENT) {

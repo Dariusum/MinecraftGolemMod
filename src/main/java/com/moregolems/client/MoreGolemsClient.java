@@ -30,7 +30,26 @@ public final class MoreGolemsClient {
                 ctx -> new ColoredCopperGolemRenderer<>(ctx, texture("sugar_cane_golem")));
         event.registerEntityRenderer(ModEntities.PUMPKIN_GOLEM.get(),
                 ctx -> new ColoredCopperGolemRenderer<>(ctx, texture("pumpkin_golem")));
-        event.registerEntityRenderer(ModEntities.EARTH_GOLEM.get(), EarthGolemRenderer::new);
+        event.registerEntityRenderer(ModEntities.EARTH_GOLEM.get(),
+                ctx -> new MiningGolemRenderer<>(ctx, texture("earth_golem")));
+        event.registerEntityRenderer(ModEntities.STONE_GOLEM.get(),
+                ctx -> new MiningGolemRenderer<>(ctx, texture("stone_golem")));
+        event.registerEntityRenderer(ModEntities.GRANITE_GOLEM.get(),
+                ctx -> new MiningGolemRenderer<>(ctx, texture("granite_golem")));
+        event.registerEntityRenderer(ModEntities.DIORITE_GOLEM.get(),
+                ctx -> new MiningGolemRenderer<>(ctx, texture("diorite_golem")));
+        event.registerEntityRenderer(ModEntities.ANDESITE_GOLEM.get(),
+                ctx -> new MiningGolemRenderer<>(ctx, texture("andesite_golem")));
+        event.registerEntityRenderer(ModEntities.DEEPSLATE_GOLEM.get(),
+                ctx -> new MiningGolemRenderer<>(ctx, texture("deepslate_golem")));
+        event.registerEntityRenderer(ModEntities.TUFF_GOLEM.get(),
+                ctx -> new MiningGolemRenderer<>(ctx, texture("tuff_golem")));
+        event.registerEntityRenderer(ModEntities.CALCITE_GOLEM.get(),
+                ctx -> new MiningGolemRenderer<>(ctx, texture("calcite_golem")));
+        event.registerEntityRenderer(ModEntities.SAND_GOLEM.get(),
+                ctx -> new MiningGolemRenderer<>(ctx, texture("sand_golem")));
+        event.registerEntityRenderer(ModEntities.GRAVEL_GOLEM.get(),
+                ctx -> new MiningGolemRenderer<>(ctx, texture("gravel_golem")));
     }
 
     private static Identifier texture(String name) {
